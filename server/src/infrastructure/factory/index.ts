@@ -1,0 +1,1 @@
+export * from './curriculum/curriculum.repository.factory'

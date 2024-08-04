@@ -1,0 +1,8 @@
+server/node_modules
+# Keep environment variables out of version control
+server/.env
+
+client/node_modules
+# Keep environment variables out of version control
+client/.env
+client/next-env.d.ts
