@@ -5,6 +5,7 @@ import { CreateCurriculun } from "../../domain/use-cases";
 import { CreateCurriculumDto } from "../../domain/dtos";
 import { createCurriculumRepository } from "../../infrastructure/factory";
 import { GetMyCurriculum } from "../../domain/use-cases/curriculum/get-my-curriculum.use-case";
+import { DeleteCurriculum } from "../../domain/use-cases/curriculum/delete-my-curriculum.use-case";
 
 export class CurriculumController {
     constructor(
@@ -26,13 +27,19 @@ export class CurriculumController {
 
     getMyCurriculum = (req: Request, res: Response) => {
         const { id } = req.body.user
-        console.log(id)
         new GetMyCurriculum(this.curriculumRepository)
             .execute(id)
             .then(curriculum => res.status(200).json(curriculum))
             .catch(error => this.handleError(error, res));
     }
 
+    deleteCurriculum = (req: Request, res: Response) => {
+        const { id, publicId } = req.params;
+        new DeleteCurriculum(this.curriculumRepository)
+            .execute(id, publicId)
+            .then(curriculum => res.status(200).json(curriculum))
+            .catch(error => this.handleError(error, res));
+    }
 
     private handleError = (error: unknown, res: Response) => {
         if (error instanceof CustomError) {

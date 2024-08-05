@@ -2,4 +2,6 @@ import { CloudinaryResponse } from "../../../infrastructure/services/cloud/cloud
 
 export abstract class CloudStorageService {
     abstract uploadFile(file: Express.Multer.File, folder?: string): Promise<CloudinaryResponse>;
+
+    abstract deleteFile(publicId: string): Promise<void>;
 }

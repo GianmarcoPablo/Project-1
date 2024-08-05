@@ -16,4 +16,8 @@ export class CurriculumRepositoryImpl implements CurriculumRepository {
     getMyCurriculum(userId: string): Promise<CurriculumEntity[]> {
         return this.curriculumDatasource.getMyCurriculum(userId);
     }
+
+    deleteCurriculum(id: string, publicId: string): Promise<void> {
+        return this.curriculumDatasource.deleteCurriculum(id, publicId);
+    }
 }

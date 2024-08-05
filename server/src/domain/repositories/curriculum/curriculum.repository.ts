@@ -5,4 +5,6 @@ export abstract class CurriculumRepository {
     abstract createCurriculum(data: CreateCurriculumDto): Promise<CurriculumEntity>
 
     abstract getMyCurriculum(userId: string): Promise<CurriculumEntity[]>
+
+    abstract deleteCurriculum(id: string, publicId: string): Promise<void>
 }

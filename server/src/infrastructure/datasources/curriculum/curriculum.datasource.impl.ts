@@ -11,6 +11,10 @@ export class CurriculumDataSourceImpl implements CurriculumDataSource {
 
 
     async createCurriculum(data: CreateCurriculumDto): Promise<CurriculumEntity> {
+
+        const exists = await prisma.curriculum.findUnique({ where: { userId: data.userId } });
+        if (exists) throw CustomError.badRequest("User already has a curriculum");
+
         const file = await this.cloudStorage.uploadFile(data.file, "curriculum");
         const curriculum = await prisma.curriculum.create({
             data: {
@@ -21,7 +25,6 @@ export class CurriculumDataSourceImpl implements CurriculumDataSource {
                 userId: data.userId,
             }
         })
-
         console.log(curriculum)
         return curriculum;
     }
@@ -34,6 +37,20 @@ export class CurriculumDataSourceImpl implements CurriculumDataSource {
                 }
             })
             return curriculum;
+        } catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
+            throw CustomError.internalServer();
+        }
+    }
+
+    async deleteCurriculum(id: string, publicId: string): Promise<void> {
+        try {
+            await this.cloudStorage.deleteFile(publicId);
+            const curriculum = await prisma.curriculum.findUnique({ where: { id } })
+            if (!curriculum) throw CustomError.notFound("Curriculum not found");
+            await prisma.curriculum.delete({ where: { id } })
         } catch (error) {
             if (error instanceof CustomError) {
                 throw error;

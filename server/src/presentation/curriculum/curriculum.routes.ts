@@ -17,6 +17,12 @@ export class CurriculumRoutes {
             ],
             controller.createCurriculum);
 
+        router.delete("/private/delete/:id/:publicId(*)",
+            [
+                AuthMiddleware.validateJWT,
+            ],
+            controller.deleteCurriculum);
+
         router.get("/private/my/curriculum",
             [
                 AuthMiddleware.validateJWT,
