@@ -3,6 +3,7 @@ import { CreateCurriculumDto } from "../../../domain/dtos/curriculum/create-curr
 import { CurriculumEntity } from "../../../domain/entities";
 import { CloudStorageService } from "../../../domain/services/cloud/cloud-storage-service";
 import { prisma } from "../../../databases/prisma/db";
+import { CustomError } from "../../../domain/errors";
 
 export class CurriculumDataSourceImpl implements CurriculumDataSource {
 
@@ -17,11 +18,27 @@ export class CurriculumDataSourceImpl implements CurriculumDataSource {
                 publicId: file.public_id,
                 format: file.format,
                 bytes: file.bytes,
-                userId: "0430feb7-c126-4695-b8aa-a4fb72dae1fd",
+                userId: data.userId,
             }
         })
 
         console.log(curriculum)
         return curriculum;
+    }
+
+    async getMyCurriculum(userId: string): Promise<CurriculumEntity[]> {
+        try {
+            const curriculum = await prisma.curriculum.findMany({
+                where: {
+                    userId: userId,
+                }
+            })
+            return curriculum;
+        } catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
+            throw CustomError.internalServer();
+        }
     }
 }

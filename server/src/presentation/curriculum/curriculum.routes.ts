@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { CurriculumController } from "./";
 import { MulterAdapter } from "../../config";
+import { AuthMiddleware } from "../auth/auth.middleware";
 
 export class CurriculumRoutes {
 
@@ -9,7 +10,21 @@ export class CurriculumRoutes {
         const controller = new CurriculumController();
         const router = Router();
 
-        router.post('/', MulterAdapter.upload.single('file'), controller.createCurriculum);
+        router.post('/',
+            [
+                MulterAdapter.upload.single('file'),
+                AuthMiddleware.validateJWT,
+            ],
+            controller.createCurriculum);
+
+        router.get("/private/my/curriculum",
+            [
+                AuthMiddleware.validateJWT,
+            ],
+            controller.getMyCurriculum);
+
         return router;
+
+
     }
 }

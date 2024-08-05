@@ -13,4 +13,7 @@ export class CurriculumRepositoryImpl implements CurriculumRepository {
         return this.curriculumDatasource.createCurriculum(data);
     }
 
+    getMyCurriculum(userId: string): Promise<CurriculumEntity[]> {
+        return this.curriculumDatasource.getMyCurriculum(userId);
+    }
 }

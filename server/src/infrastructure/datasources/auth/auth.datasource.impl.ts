@@ -6,7 +6,6 @@ import { UserEntity } from '../../../domain/entities';
 import { CustomError } from '../../../domain/errors';
 import { UserMapper } from '../../mappers';
 
-
 type HashFunction = (password: string) => string;
 type CompareFunction = (password: string, hashed: string) => boolean;
 
@@ -29,7 +28,9 @@ export class AuthDatasourceImpl implements AuthDataSource {
             if (!isMatching) throw CustomError.badRequest('Password is not valid');
             return UserMapper.userEntityFromObject(user);
         } catch (error) {
-            console.log(error);
+            if (error instanceof CustomError) {
+                throw error;
+            }
             throw CustomError.internalServer();
         }
     }
@@ -57,8 +58,7 @@ export class AuthDatasourceImpl implements AuthDataSource {
 
 
             // 3. Mapear la respuesta a nuestra entidad
-            return UserMapper.userEntityFromObject(user);
-
+            return UserMapper.userEntityFromObject({ ...user });
 
         } catch (error) {
 
@@ -68,9 +68,7 @@ export class AuthDatasourceImpl implements AuthDataSource {
             throw CustomError.internalServer();
 
         }
-
     }
 
-
-
 }
+

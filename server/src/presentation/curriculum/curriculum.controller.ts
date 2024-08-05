@@ -4,6 +4,7 @@ import { CurriculumRepository } from "../../domain/repositories";
 import { CreateCurriculun } from "../../domain/use-cases";
 import { CreateCurriculumDto } from "../../domain/dtos";
 import { createCurriculumRepository } from "../../infrastructure/factory";
+import { GetMyCurriculum } from "../../domain/use-cases/curriculum/get-my-curriculum.use-case";
 
 export class CurriculumController {
     constructor(
@@ -12,11 +13,22 @@ export class CurriculumController {
 
     createCurriculum = (req: Request, res: Response) => {
         const file = req.file;
-        const [error, dto] = CreateCurriculumDto.create({ file });
+        const { id } = req.body.user
+        console.log(id)
+        const [error, dto] = CreateCurriculumDto.create({ file, userId: id });
         if (error) return res.status(400).json({ error: error });
 
         new CreateCurriculun(this.curriculumRepository)
             .execute(dto!)
+            .then(curriculum => res.status(200).json(curriculum))
+            .catch(error => this.handleError(error, res));
+    }
+
+    getMyCurriculum = (req: Request, res: Response) => {
+        const { id } = req.body.user
+        console.log(id)
+        new GetMyCurriculum(this.curriculumRepository)
+            .execute(id)
             .then(curriculum => res.status(200).json(curriculum))
             .catch(error => this.handleError(error, res));
     }

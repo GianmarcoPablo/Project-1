@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { AuthRoutes } from './auth';
 import { CurriculumRoutes } from './curriculum';
+import { SeedRoutes } from './seed/seed.routes';
 
 
 export class AppRoutes {
@@ -11,6 +12,7 @@ export class AppRoutes {
         const router = Router();
 
         // Definir todas mis rutas principales
+        router.use('/api/v1/seed', SeedRoutes.routes)
         router.use('/api/v1/auth', AuthRoutes.routes)
         router.use('/api/v1/curriculum', CurriculumRoutes.routes)
 

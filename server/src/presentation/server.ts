@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-
+import cors from 'cors';
 interface Options {
     port: number
     routes: Router
@@ -21,6 +21,7 @@ export class Server {
     async start() {
 
         // Middlewares
+        this.app.use(cors());
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true })); // x-www-
 

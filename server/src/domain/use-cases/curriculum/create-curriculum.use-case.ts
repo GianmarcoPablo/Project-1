@@ -4,7 +4,7 @@ import { CustomError } from '../../errors';
 import { CurriculumRepository } from '../../repositories';
 
 interface CreateCurriculumUseCase {
-
+    execute(createCurriculumDto: CreateCurriculumDto): Promise<CurriculumEntity>;
 }
 
 export class CreateCurriculun implements CreateCurriculumUseCase {

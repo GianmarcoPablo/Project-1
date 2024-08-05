@@ -2,11 +2,15 @@ export class CreateCurriculumDto {
 
     constructor(
         public readonly file: Express.Multer.File,
+        public readonly userId: string
     ) { }
 
     static create(object: { [key: string]: any; }): [string?, CreateCurriculumDto?] {
 
-        const { file } = object as { file: Express.Multer.File };
+        const { file, userId } = object as {
+            file: Express.Multer.File,
+            userId: string
+        }
 
 
         if (!file) return ['Missing file'];
@@ -19,7 +23,7 @@ export class CreateCurriculumDto {
 
         return [
             undefined,
-            new CreateCurriculumDto(file)
+            new CreateCurriculumDto(file, userId)
         ];
     }
 }

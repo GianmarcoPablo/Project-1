@@ -3,4 +3,6 @@ import { CurriculumEntity } from "../../entities";
 
 export abstract class CurriculumRepository {
     abstract createCurriculum(data: CreateCurriculumDto): Promise<CurriculumEntity>
+
+    abstract getMyCurriculum(userId: string): Promise<CurriculumEntity[]>
 }

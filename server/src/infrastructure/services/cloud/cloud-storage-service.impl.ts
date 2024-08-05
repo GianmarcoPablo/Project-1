@@ -27,4 +27,15 @@ export class CloudinaryService implements CloudStorageService {
             createReadStream(file.buffer).pipe(uploadStream);
         })
     }
+
+    async deleteFile(fileName: string): Promise<CloudinaryResponse> {
+        return new Promise<CloudinaryResponse>((resolve, reject) => {
+            cloudinary.v2.uploader.destroy(fileName, (error, result) => {
+                if (error) return reject(error);
+                resolve(result!);
+            });
+        })
+    }
+
+  
 }

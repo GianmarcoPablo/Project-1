@@ -3,6 +3,7 @@ import { CustomError } from "../../domain/errors";
 import { AuthRepository } from "../../domain/repositories";
 import { LoginUserDto, RegisterUserDto } from "../../domain/dtos";
 import { LoginUser, RegisterUser } from "../../domain/use-cases";
+import jwt from 'jsonwebtoken';
 
 export class AuthController {
 
@@ -30,10 +31,20 @@ export class AuthController {
 
     loginUser = (req: Request, res: Response) => {
         const [error, dto] = LoginUserDto.create(req.body);
-        if (error) return this.handleError(error, res);
+        if (error) return res.status(400).json({ error: error });
         new LoginUser(this.authRepository)
             .execute(dto!)
             .then(user => res.status(200).json(user))
             .catch(error => this.handleError(error, res));
+    }
+
+    decrypt = (req: Request, res: Response) => {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
+        jwt.verify(token, process.env.JWT_SEED!, (err, decoded) => {
+            if (err) return res.status(401).json({ error: 'Unauthorized' });
+            res.status(200).json(decoded);
+        });
     }
 }
