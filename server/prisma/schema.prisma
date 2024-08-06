@@ -24,6 +24,7 @@ model User {
   lastname     String
   email        String         @unique
   password     String
+  customerId   String?        @unique
   roles        Role[]         @default([normal])
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt

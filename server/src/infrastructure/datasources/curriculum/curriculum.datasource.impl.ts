@@ -25,8 +25,14 @@ export class CurriculumDataSourceImpl implements CurriculumDataSource {
                 userId: data.userId,
             }
         })
-        console.log(curriculum)
-        return curriculum;
+        return new CurriculumEntity(
+            curriculum.id,
+            curriculum.url,
+            curriculum.publicId,
+            curriculum.format,
+            curriculum.bytes,
+            curriculum.userId
+        );
     }
 
     async getMyCurriculum(userId: string): Promise<CurriculumEntity[]> {

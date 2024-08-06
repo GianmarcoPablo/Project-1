@@ -1,4 +1,4 @@
-import { HashPasswordAdapter } from '../../../config';
+import { HashPasswordAdapter, StripeAdapter } from '../../../config';
 import { prisma } from '../../../databases';
 import { AuthDataSource } from '../../../domain/datasources';
 import { LoginUserDto, RegisterUserDto } from '../../../domain/dtos';
@@ -46,7 +46,7 @@ export class AuthDatasourceImpl implements AuthDataSource {
             const exists = await prisma.user.findUnique({ where: { email } });
             if (exists) throw CustomError.badRequest('User already exists');
 
-            // 2. Hash de contraseña
+            // 1. Hash de contraseña
             const user = await prisma.user.create({
                 data: {
                     email: email,
@@ -56,12 +56,31 @@ export class AuthDatasourceImpl implements AuthDataSource {
                 }
             });
 
+            // 2. crear con stripe el customer
+
+            const customer = await StripeAdapter.stripe.customers.create({
+                email: email,
+                name: firstname + ' ' + lastname,
+                metadata: {
+                    userId: user.id
+                }
+            })
+
+            const rpta = await prisma.user.update({
+                where: {
+                    id: user.id
+                },
+                data: {
+                    customerId: customer.id
+                }
+            })
+
+            console.log(rpta)
 
             // 3. Mapear la respuesta a nuestra entidad
             return UserMapper.userEntityFromObject({ ...user });
 
         } catch (error) {
-
             if (error instanceof CustomError) {
                 throw error;
             }
