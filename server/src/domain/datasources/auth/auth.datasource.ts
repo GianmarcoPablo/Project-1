@@ -5,4 +5,5 @@ export abstract class AuthDataSource {
     abstract register(dto: RegisterUserDto): Promise<UserEntity>
     abstract login(dto: LoginUserDto): Promise<UserEntity>
     abstract validateEmail(dot: ValidateEmailDto): Promise<boolean>
+    abstract getMyUser(id: string): Promise<UserEntity>
 }

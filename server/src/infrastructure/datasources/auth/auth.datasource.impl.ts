@@ -85,8 +85,8 @@ export class AuthDatasourceImpl implements AuthDataSource {
         try {
             const user = await prisma.user.findUnique({ where: { email: dto.email } });
             if (!user) throw CustomError.internalServer("Email not exists");
-            if (user.verificationCode !== dto.code) throw CustomError.internalServer("Invalid code");
-            if (user.verificationCodeExpires && user.verificationCodeExpires < new Date()) return false;
+            if (user.verificationCode !== dto.code) throw CustomError.badRequest("Invalid code");
+            if (user.verificationCodeExpires && user.verificationCodeExpires < new Date()) throw CustomError.badRequest("Code expired");
 
             await prisma.user.update({
                 where: { email: dto.email },
@@ -95,9 +95,51 @@ export class AuthDatasourceImpl implements AuthDataSource {
 
             return true;
         } catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
             throw CustomError.internalServer();
         }
     }
+
+    async getMyUser(id: string): Promise<UserEntity> {
+        try {
+            const user = await prisma.user.findUnique(
+                {
+                    where: { id },
+                    include: {
+                        imageUser: true
+                    }
+                }
+            );
+            if (!user) throw CustomError.badRequest("User not found");
+            return new UserEntity(
+                user.id,
+                user.firstname,
+                user.lastname,
+                user.email,
+                user.password,
+                user.roles,
+                user.customerId || undefined,
+                user.imageUser ? {
+                    id: user.imageUser.id,
+                    publicId: user.imageUser.publicId!,
+                    url: user.imageUser.url!,
+                    format: user.imageUser.format!,
+                    width: user.imageUser.width!,
+                    height: user.imageUser.height!,
+                    bytes: user.imageUser.bytes!,
+                    userId: user.imageUser.userId,
+                } : undefined
+            );
+        } catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
+            throw CustomError.internalServer();
+        }
+    }
+
 
 
     private async senEmailValidation(email: string) {
@@ -131,6 +173,8 @@ export class AuthDatasourceImpl implements AuthDataSource {
         if (!isSent) throw CustomError.internalServer("Error sending email verification code");
         return true;
     }
+
+
 
     private generateCode(): string {
         return Math.floor(100000 + Math.random() * 900000).toString();

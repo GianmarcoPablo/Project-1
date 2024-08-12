@@ -1,5 +1,14 @@
 
-
+interface ImageUser {
+    id: string,
+    publicId: string,
+    url: string,
+    format: string,
+    width: number,
+    height: number,
+    bytes: number,
+    userId: string
+}
 
 export class UserEntity {
 
@@ -9,8 +18,9 @@ export class UserEntity {
         public lastname: string,
         public email: string,
         public password: string,
-        public role: string[],
-        public img?: string,
+        public roles: string[],
+        public customerId?: string,
+        public imageUser?: ImageUser,
     ) { }
 
 

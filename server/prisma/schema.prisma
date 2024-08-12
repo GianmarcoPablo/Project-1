@@ -156,7 +156,6 @@ model Profile {
   yearsOfExp Int?
   education  Study?
   openSearch Boolean?
-
   skills    String[]
   languages String[]
   links     String[]

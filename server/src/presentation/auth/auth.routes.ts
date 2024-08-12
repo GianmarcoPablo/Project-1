@@ -4,6 +4,7 @@ import { AuthDatasourceImpl } from "../../infrastructure/datasources";
 import { AuthRepositoryImpl } from "../../infrastructure/repositories";
 import { EmailService } from "../../infrastructure/services/mails/email.service";
 import { envs } from "../../config";
+import { AuthMiddleware } from "./auth.middleware";
 
 export class AuthRoutes {
     static get routes(): Router {
@@ -21,6 +22,7 @@ export class AuthRoutes {
 
         router.post('/register', controller.registerUser);
         router.post('/login', controller.loginUser);
+        router.get("/my-user", [AuthMiddleware.validateJWT], controller.getMyUser);
         router.post("/validate-email", controller.validateEmail);
         router.get('/decrypt', controller.decrypt);
 

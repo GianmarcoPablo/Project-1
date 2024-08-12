@@ -5,6 +5,7 @@ import { LoginUserDto, RegisterUserDto, ValidateEmailDto } from "../../domain/dt
 import { LoginUser, RegisterUser } from "../../domain/use-cases";
 import jwt from 'jsonwebtoken';
 import { ValidateEmail } from "../../domain/use-cases/auth/validate-email.use-case";
+import { GetMyUser } from "../../domain/use-cases/auth/get-my-user.use-case";
 
 export class AuthController {
 
@@ -41,12 +42,20 @@ export class AuthController {
             .catch(error => this.handleError(error, res));
     }
 
+    getMyUser = (req: Request, res: Response) => {
+        const { id } = req.body.user
+        new GetMyUser(this.authRepository)
+            .execute(id)
+            .then(user => res.status(200).json(user))
+            .catch(error => this.handleError(error, res));
+    }
+
     validateEmail = (req: Request, res: Response) => {
         const [error, dto] = ValidateEmailDto.create(req.body);
         if (error) return res.status(400).json({ error: error });
         new ValidateEmail(this.authRepository)
             .execute(dto!)
-            .then(response => res.status(200).json(response))
+            .then(response => res.status(200).json({ message: "Codigo de verificación enviado" }))
             .catch(error => this.handleError(error, res));
     }
 
