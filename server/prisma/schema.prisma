@@ -19,21 +19,43 @@ enum Role {
 }
 
 model User {
-  id           String         @id @default(uuid())
-  firstname    String
-  lastname     String
-  email        String         @unique
-  password     String
-  customerId   String?        @unique
-  roles        Role[]         @default([normal])
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  session      Session[]
-  subscription Subscription[]
-  invoice      Invoice[]
-  profile      Profile?
-  company      Company[]
-  curriculum   Curriculum?
+  id                      String         @id @default(uuid())
+  firstname               String
+  lastname                String
+  email                   String         @unique
+  password                String
+  verificationCode        String?
+  verificationCodeExpires DateTime?
+  emailVerified           Boolean        @default(false)
+  isPremiun               Boolean        @default(false)
+  customerId              String?        @unique
+  roles                   Role[]         @default([normal])
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  session                 Session[]
+  subscription            Subscription[]
+  invoice                 Invoice[]
+  profile                 Profile?
+  company                 Company[]
+  curriculum              Curriculum?
+  imageUser               ImageUser?
+}
+
+model ImageUser {
+  id        String   @id() @default(uuid())
+  publicId  String?  @unique
+  url       String?
+  format    String?
+  width     Float?
+  height    Float?
+  bytes     Float?
+  isAvatar  Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("image_user")
 }
 
 model Company {
@@ -96,20 +118,21 @@ model Session {
 }
 
 model Subscription {
-  id                   String    @id @default(uuid())
-  stripeSubscriptionId String    @unique
-  user                 User      @relation(fields: [userId], references: [id])
-  userId               String
-  status               String
-  planId               String
-  canceled_at          DateTime?
-  price                Int       @default(0)
-  startDate            DateTime  @default(now())
-  endDate              DateTime
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-  isMonthly            Boolean   @default(false)
-  isYearly             Boolean   @default(false)
+  id                 String    @id @default(uuid())
+  subscriptionId     String    @unique
+  user               User      @relation(fields: [userId], references: [id])
+  userId             String
+  status             String
+  planId             String
+  canceled_at        DateTime?
+  price              Int       @default(0)
+  currentPeriodStart DateTime  @default(now())
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  isMonthly          Boolean   @default(false)
+  isYearly           Boolean   @default(false)
 }
 
 model Invoice {

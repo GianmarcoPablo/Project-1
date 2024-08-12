@@ -1,5 +1,5 @@
 import { AuthDataSource } from "../../../domain/datasources";
-import { LoginUserDto, RegisterUserDto } from "../../../domain/dtos";
+import { LoginUserDto, RegisterUserDto, ValidateEmailDto } from "../../../domain/dtos";
 import { UserEntity } from "../../../domain/entities";
 import { AuthRepository } from "../../../domain/repositories";
 
@@ -18,5 +18,7 @@ export class AuthRepositoryImpl implements AuthRepository {
         return this.authDatasource.register(registerUserDto);
     }
 
-
+    validateEmail(dto: ValidateEmailDto): Promise<boolean> {
+        return this.authDatasource.validateEmail(dto);
+    }
 }

@@ -22,10 +22,13 @@ export class Server {
 
         // Middlewares
         this.app.use(cors());
-        this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: true })); // x-www-
-
-
+        this.app.use((req, res, next) => {
+            if (req.originalUrl === '/api/v1/subscriptions/webhook') {
+                next();
+            } else {
+                express.json()(req, res, next);
+            }
+        });
         // Usar las rutas definidas
         this.app.use(this.routes);
 

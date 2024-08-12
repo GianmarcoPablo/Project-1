@@ -4,13 +4,13 @@ import { CustomError } from "../../errors";
 import { AuthRepository } from "../../repositories";
 
 interface UserToken {
-    token: string;
-    user: {
+    data:{
         id: string;
         firstname: string;
         lastname: string;
         email: string;
-    };
+        token: string;
+    }
 }
 
 interface RegisterUserUseCase {
@@ -34,12 +34,12 @@ export class RegisterUser implements RegisterUserUseCase {
         if (!token) throw CustomError.internalServer('Error generating token');
 
         return {
-            token: token,
-            user: {
+            data: {
                 id: user.id,
                 firstname: user.firstname,
                 lastname: user.lastname,
                 email: user.email,
+                token: token,
             }
         }
     }

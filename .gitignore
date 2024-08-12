@@ -1,7 +1,7 @@
 server/node_modules
 # Keep environment variables out of version control
 server/.env
-
+server/ngrok.exe
 client/node_modules
 # Keep environment variables out of version control
 client/.env
